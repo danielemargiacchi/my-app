@@ -34,8 +34,11 @@ model User {
   createdAt     DateTime
   updatedAt     DateTime
 
-  name          String
-  email         String
+  username        String
+  displayUsername String?
+
+  name          String?
+  email         String?
   emailVerified Boolean
   image         String?
 
@@ -44,7 +47,7 @@ model User {
 
   posts Post[]
 
-  @@unique([email])
+  @@unique([username])
   @@map("users")
 }
 

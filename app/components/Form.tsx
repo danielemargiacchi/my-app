@@ -3,26 +3,32 @@
 import Link from "next/link";
 import { authClient } from "../lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 
 export const Form = ({ type }: { type: 'signIn' | 'signUp' }) => {
+    const [isPending, setIsPending] = useState(false);
 
     const router = useRouter();
 
     const signUp = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement)
-        const name = String(formData.get('name'));
+        const name = '';
         const password = String(formData.get('password'));
-        const email = String(formData.get('email')) ;
-
-        console.log(name, email, password);
+        const username = String(formData.get('username')) ;
+        const email = `${username}@example.com` ;
         authClient.signUp.email({
             name,
             email,
-            password
+            password,
+            username
         },{
-            onRequest: () => {},
-            onResponse:() => {},
+            onRequest: () => {
+                setIsPending(true)
+            },
+            onResponse:() => {
+                setIsPending(false)
+            },
             onError: (context) => {
                 console.log(context.error.message);
             },
@@ -35,14 +41,18 @@ export const Form = ({ type }: { type: 'signIn' | 'signUp' }) => {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement)
         const password = String(formData.get('password'));
-        const email = String(formData.get('email')) ;
+        const username = String(formData.get('username')) ;
 
-        authClient.signIn.email({
-            email,
+        authClient.signIn.username({
+            username,
             password
         },{
-            onRequest: () => {},
-            onResponse:() => {},
+            onRequest: () => {
+                setIsPending(true)
+            },
+            onResponse:() => {
+                setIsPending(false)
+            },
             onError: (context) => {
                 console.log(context.error.message);
             },
@@ -62,22 +72,14 @@ export const Form = ({ type }: { type: 'signIn' | 'signUp' }) => {
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
             <form className="space-y-6" onSubmit={type === 'signUp' ? signUp : signIn}>
-                {type === 'signUp' && (
-                    <div>
-                        <label htmlFor="name" className="block text-sm/6 font-medium text-gray-900">Name</label>
-                        <div className="mt-2">
-                            <input type="name" name="name" id="name" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
-                        </div>
-                    </div>
-                )}
-
                 <div>
-                    <label htmlFor="email" className="block text-sm/6 font-medium text-gray-900">Email address</label>
+                    <div className="flex items-center justify-between">
+                        <label htmlFor="username" className="block text-sm/6 font-medium text-gray-900">username</label>
+                    </div>
                     <div className="mt-2">
-                        <input type="email" name="email" id="email" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
+                        <input type="text" name="username" id="username" required className="block w-full rounded-md bg-white px-3 py-1.5 text-base text-gray-900 outline-1 -outline-offset-1 outline-gray-300 placeholder:text-gray-400 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-600 sm:text-sm/6" />
                     </div>
                 </div>
-
                 <div>
                     <div className="flex items-center justify-between">
                         <label htmlFor="password" className="block text-sm/6 font-medium text-gray-900">Password</label>
@@ -99,7 +101,7 @@ export const Form = ({ type }: { type: 'signIn' | 'signUp' }) => {
                 )}
 
                 <div>
-                    <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
+                    <button disabled={isPending} type="submit" className=" disabled:bg-indigo-300 flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm/6 font-semibold text-white shadow-xs hover:bg-indigo-500 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Sign in</button>
                 </div>
             </form>
 
