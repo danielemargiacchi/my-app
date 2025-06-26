@@ -4,6 +4,7 @@ import { generateProjectCode } from "./utils";
 import { auth } from "./auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
+import { revalidatePath } from "next/cache";
 
 const prisma = new PrismaClient();
 
@@ -57,6 +58,8 @@ export const assigneeProject = async (formData: FormData) => {
             },
         },
     })
+
+    revalidatePath('/dashboard')
 }
 
 
@@ -154,7 +157,7 @@ export const createTask = async (formData: FormData) => {
         console.error(error)
     }
 
-    redirect(`/dashboard/projects/${projectCode}`)
+    revalidatePath(`/dashboard/projects/${projectCode}`)
 
     
 
