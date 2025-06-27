@@ -1,19 +1,27 @@
 import { headers } from "next/headers";
 import { auth } from "../../lib/auth";
-import { fetchAllProjects } from "../../lib/data";
+import { fetchFilteredProjects } from "../../lib/data";
 import Link from "next/link";
+import Search from "../Search";
 
-const Projects = async () => {
+const Projects = async ({
+  searchParams,
+}: {
+  searchParams?: {
+    query?: string
+    page?: string
+  }
+})=> {
+
+  const query = searchParams?.query || '';
+  
   const session = await auth.api.getSession({ headers: await headers() });
   const userId = String(session?.user.id);
-  const projects = await fetchAllProjects(userId);
-
-  const createdProjects = projects?.createdProjects ?? [];
-  const accessProjects = projects?.projectAccess?.map(p => p.project) ?? [];
-  const allProjects = [...createdProjects, ...accessProjects];
+  const allProjects = await fetchFilteredProjects(userId, query);
 
   return (
     <div className="overflow-x-auto">
+      <Search placeholder="search by project name"/>
       <table className="min-w-full divide-y divide-gray-200 text-sm">
         <thead className="bg-gray-50">
           <tr>

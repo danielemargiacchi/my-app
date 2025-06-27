@@ -18,9 +18,9 @@ const ProjectTasks = ({
   projectCode?: string;
 }) => {
   return (
-    <div className="mt-2">
+    <div className="mt-2 overflow-x-scroll">
       <h3 className="text-xl font-bold mb-2">Tasks</h3>
-      <table className="min-w-full divide-y divide-gray-200">
+      <table className="min-w-full divide-y divide-gray-200 overflow-auto">
         <thead className="bg-gray-50">
           <tr>
             <th scope="col" className="px-6 py-3 text-start">

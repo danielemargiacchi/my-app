@@ -33,6 +33,7 @@ export const createProject = async (formData: FormData) => {
         console.error("Error during project creation:", error);
     }
 
+    revalidatePath("/dashboard");
     redirect("/dashboard");
 }
 
@@ -45,7 +46,7 @@ export const editProject = async (formData: FormData) => {
 
     try {
         await prisma.project.update({
-            where:{
+            where: {
                 id: projectId
             },
             data: {
@@ -58,6 +59,7 @@ export const editProject = async (formData: FormData) => {
         console.error("Error during project creation:", error);
     }
 
+    revalidatePath(`/dashboard/projects/${projectCode}`);
     redirect(`/dashboard/projects/${projectCode}`);
 }
 
@@ -100,9 +102,88 @@ export const fetchAllProjects = async (userId: string) => {
             createdProjects: true
         },
     })
+    const projectAccess = data?.projectAccess.map(p => p.project) || [];
+    const created = data?.createdProjects || [];
 
-    return data;
+    const allProjects = [...created, ...projectAccess];
+
+    return allProjects;
 }
+export const fetchFilteredProjects = async (userId: string, query: string) => {
+
+    const data = await prisma.user.findUnique({
+        where: { id: userId },
+        include: {
+            projectAccess: {
+                where: {
+                    OR: [
+                        {
+                            project: {
+                                name: {
+                                    contains: query,
+                                    mode: 'insensitive'
+                                }
+                            }
+                        },
+                        {
+                            project: {
+                                description: {
+                                    contains: query,
+                                    mode: 'insensitive'
+                                }
+                            }
+                        },
+                        {
+                            project: {
+                                projectCode: {
+                                    contains: query,
+                                    mode: 'insensitive'
+                                }
+                            }
+                        },
+                    ]
+
+                },
+                include: {
+                    project: true,
+                },
+            },
+            createdProjects: {
+                where: {
+                    OR: [
+                        {
+                            name: {
+                                contains: query,
+                                mode: 'insensitive'
+                            }
+                        },
+                        {
+                            description: {
+                                contains: query,
+                                mode: 'insensitive'
+                            }
+                        },
+                        {
+                            projectCode: {
+                                contains: query,
+                                mode: 'insensitive'
+                            }
+
+                        },
+                    ]
+                }
+            }
+        },
+    })
+    const projectAccess = data?.projectAccess.map(p => p.project) || [];
+    const created = data?.createdProjects || [];
+
+    const allProjects = [...created, ...projectAccess];
+
+    return allProjects;
+}
+
+
 
 
 export const getProjectByCode = async (projectCode: string) => {
@@ -144,13 +225,13 @@ export const getTasksByProjectCode = async (projectCode: string) => {
 }
 
 export const getAllUserTasks = async (userId: string) => {
-    
+
     const tasks = await prisma.task.findMany({
         where: {
-            assignedUserId: userId, 
+            assignedUserId: userId,
         },
         include: {
-            project: true, 
+            project: true,
         },
     });
 
@@ -164,11 +245,11 @@ export const createTask = async (formData: FormData) => {
     const status = formData.get('status') as Status;
     const projectId = String(formData.get('projectId'));
     const assignedUserId = String(formData.get('assignedUserId'));
-    
+
     const projectCode = String(formData.get('projectCode'));
-    
+
     try {
-         await prisma.task.create({
+        await prisma.task.create({
             data: {
                 name: name,
                 description: description,
@@ -190,13 +271,13 @@ export const editTask = async (formData: FormData) => {
     const status = formData.get('status') as Status;
     const projectId = String(formData.get('projectId'));
     const assignedUserId = String(formData.get('assignedUserId'));
-    
+
     const projectCode = String(formData.get('projectCode'));
 
     const taskId = String(formData.get('taskId'));
-    
+
     try {
-         await prisma.task.update({
+        await prisma.task.update({
             where: {
                 id: taskId
             },
@@ -221,11 +302,11 @@ export const deleteTask = async (formData: FormData) => {
     const projectCode = String(formData.get('projectCode'));
 
     await prisma.task.delete({
-        where:{
+        where: {
             id: id
         }
     })
 
     revalidatePath(`/dashboard/projects/${projectCode}`)
-    
+
 }
