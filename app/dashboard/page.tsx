@@ -2,7 +2,7 @@ import { Suspense } from "react";
 import { assigneeProject } from "../lib/data";
 import Link from "next/link";
 import { DashboardProjectsSkeleton } from "../components/skeleton/DashboardProjectsSkeleton";
-import DashboardProjects from "../components/DashboardProjects";
+import DashboardProjects from "../components/projects/DashboardProjects";
 
 const Page = async () => {
 
@@ -24,8 +24,8 @@ const Page = async () => {
                 </div>
 
                 {/* Projects grid */}
-                <Suspense fallback={<DashboardProjectsSkeleton/>}>
-                    <DashboardProjects/>
+                <Suspense fallback={<DashboardProjectsSkeleton />}>
+                    <DashboardProjects />
                 </Suspense>
 
                 {/* Subscribe */}

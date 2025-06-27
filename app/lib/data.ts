@@ -34,10 +34,34 @@ export const createProject = async (formData: FormData) => {
     }
 
     redirect("/dashboard");
-
-
-
 }
+
+
+export const editProject = async (formData: FormData) => {
+    const name = String(formData.get('name'));
+    const description = String(formData.get('description'));
+    const projectId = String(formData.get('projectId'));
+    const projectCode = String(formData.get('projectCode'));
+
+    try {
+        await prisma.project.update({
+            where:{
+                id: projectId
+            },
+            data: {
+                name: name,
+                description: description,
+            },
+        })
+
+    } catch (error) {
+        console.error("Error during project creation:", error);
+    }
+
+    redirect(`/dashboard/projects/${projectCode}`);
+}
+
+
 
 
 export const assigneeProject = async (formData: FormData) => {
@@ -159,7 +183,49 @@ export const createTask = async (formData: FormData) => {
 
     revalidatePath(`/dashboard/projects/${projectCode}`)
 
+}
+export const editTask = async (formData: FormData) => {
+    const name = String(formData.get('name'));
+    const description = String(formData.get('description'));
+    const status = formData.get('status') as Status;
+    const projectId = String(formData.get('projectId'));
+    const assignedUserId = String(formData.get('assignedUserId'));
     
+    const projectCode = String(formData.get('projectCode'));
 
+    const taskId = String(formData.get('taskId'));
+    
+    try {
+         await prisma.task.update({
+            where: {
+                id: taskId
+            },
+            data: {
+                name: name,
+                description: description,
+                status: status,
+                projectId: projectId,
+                assignedUserId: assignedUserId || null
+            },
+        })
+    } catch (error) {
+        console.error(error)
+    }
 
+    revalidatePath(`/dashboard/projects/${projectCode}`)
+
+}
+
+export const deleteTask = async (formData: FormData) => {
+    const id = String(formData.get('id'));
+    const projectCode = String(formData.get('projectCode'));
+
+    await prisma.task.delete({
+        where:{
+            id: id
+        }
+    })
+
+    revalidatePath(`/dashboard/projects/${projectCode}`)
+    
 }

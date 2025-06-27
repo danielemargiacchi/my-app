@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
-import { auth } from "../lib/auth";
-import { fetchAllProjects } from "../lib/data";
+import { auth } from "../../lib/auth";
+import { fetchAllProjects } from "../../lib/data";
 import Link from "next/link";
 
 const DashboardProjects = async () => {

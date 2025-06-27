@@ -1,8 +1,8 @@
 
-import { Form } from "./components/Form";
+import { Form } from "./components/auth/Form";
 
 export default function Home() {
   return (
-    <Form type="signIn"/>
+    <Form type="signIn" />
   );
 }

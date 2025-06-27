@@ -1,6 +1,14 @@
-import Projects from "@/app/components/Projects";
+import Projects from "@/app/components/projects/Projects";
 import { ProjectsSkeleton } from "@/app/components/skeleton/ProjectsSkeleton";
+import { Metadata } from "next";
 import { Suspense } from "react";
+
+export const metadata: Metadata = {
+    title: 'Projects | ProjectTaskManager',
+    description: 'The best app to manage your projects and tasks.',
+    metadataBase: new URL('https://next-learn-dashboard.vercel.sh'),
+};
+
 
 const Page = () => {
     return (
@@ -12,8 +20,8 @@ const Page = () => {
                 </div>
 
                 {/* Projects grid */}
-                <Suspense fallback={<ProjectsSkeleton/>}>
-                    <Projects/>
+                <Suspense fallback={<ProjectsSkeleton />}>
+                    <Projects />
                 </Suspense>
             </div>
         </>

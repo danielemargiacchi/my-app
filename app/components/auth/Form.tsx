@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { authClient } from "../lib/auth-client";
+import { authClient } from "../../lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
@@ -15,24 +15,24 @@ export const Form = ({ type }: { type: 'signIn' | 'signUp' }) => {
         const formData = new FormData(e.target as HTMLFormElement)
         const name = '';
         const password = String(formData.get('password'));
-        const username = String(formData.get('username')) ;
-        const email = `${username}@example.com` ;
+        const username = String(formData.get('username'));
+        const email = `${username}@example.com`;
         authClient.signUp.email({
             name,
             email,
             password,
             username
-        },{
+        }, {
             onRequest: () => {
                 setIsPending(true)
             },
-            onResponse:() => {
+            onResponse: () => {
                 setIsPending(false)
             },
             onError: (context) => {
                 console.log(context.error.message);
             },
-            onSuccess:() => {
+            onSuccess: () => {
                 router.push('/')
             }
         })
@@ -41,22 +41,22 @@ export const Form = ({ type }: { type: 'signIn' | 'signUp' }) => {
         e.preventDefault();
         const formData = new FormData(e.target as HTMLFormElement)
         const password = String(formData.get('password'));
-        const username = String(formData.get('username')) ;
+        const username = String(formData.get('username'));
 
         authClient.signIn.username({
             username,
             password
-        },{
+        }, {
             onRequest: () => {
                 setIsPending(true)
             },
-            onResponse:() => {
+            onResponse: () => {
                 setIsPending(false)
             },
             onError: (context) => {
                 console.log(context.error.message);
             },
-            onSuccess:() => {
+            onSuccess: () => {
                 router.push('/dashboard')
             }
         })
@@ -106,7 +106,7 @@ export const Form = ({ type }: { type: 'signIn' | 'signUp' }) => {
             </form>
 
             <p className="mt-10 text-center text-sm/6 text-gray-500">
-                 {type === 'signIn' ? 'Have not an account yet? ' : 'Already have an account? '}
+                {type === 'signIn' ? 'Have not an account yet? ' : 'Already have an account? '}
                 <Link className="font-semibold text-indigo-600 hover:text-indigo-500" href={type === 'signIn' ? '/signup' : '/'} >{type === 'signIn' ? 'Sign up' : 'Log in'}</Link>
             </p>
         </div>
